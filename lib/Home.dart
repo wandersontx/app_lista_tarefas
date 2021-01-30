@@ -12,6 +12,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List _listaTarefas = [];
+  Map<String, dynamic> _ultimaTarefaRemovida = Map();
   TextEditingController _controllerTarefa = TextEditingController();
 
   Future<File> _getFile() async {
@@ -47,13 +48,28 @@ class _HomeState extends State<Home> {
   }
 
   Widget _criarItemlista(context, index) {
-    final item = _listaTarefas[index]['titulo'];
     return Dismissible(
-        key: Key(item),
+        key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
         direction: DismissDirection.endToStart,
         onDismissed: (director) {
+          _ultimaTarefaRemovida = _listaTarefas[index];
           _listaTarefas.removeAt(index);
           _salvarArquivo();
+
+          final snackBar = SnackBar(
+            duration: Duration(seconds: 4),
+            content: Text('Tarefa removida'),
+            action: SnackBarAction(
+              label: 'Desfazer',
+              onPressed: () {
+                setState(() {
+                  _listaTarefas.insert(index, _ultimaTarefaRemovida);
+                });
+                _salvarArquivo();
+              },
+            ),
+          );
+          Scaffold.of(context).showSnackBar(snackBar);
         },
         background: Container(
           color: Colors.red,
