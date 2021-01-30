@@ -6,6 +6,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List _listaTarefas = ['Ir ao mercado', 'Estudar', 'Exercício do dia'];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,25 +14,49 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.purple,
         title: Text('Lista de tarefas'),
       ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,
         child: Icon(Icons.add),
-        onPressed: (){
-          print('Resultado: botão pressionado');
+        backgroundColor: Colors.purple,
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Adicionar Tarefa'),
+                  content: TextField(
+                    decoration: InputDecoration(labelText: 'Digite sua tarefa'),
+                    onChanged: (text) {},
+                  ),
+                  actions: [
+                    FlatButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Cancelar'),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        //logica para salvar os dados
+                        Navigator.pop(context);
+                      },
+                      child: Text('Salvar'),
+                    ),
+                  ],
+                );
+              });
         },
-        
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          children: [
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: (){}
-            )
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+                itemCount: _listaTarefas.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_listaTarefas[index]),
+                  );
+                }),
+          ),
+        ],
       ),
     );
   }
